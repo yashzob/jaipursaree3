@@ -215,8 +215,10 @@ def register(request):
             user = form.save()
             print(user)  # Save the User object first
             #name = form.cleaned_data['name']  # Assuming 'name' is a field in the form
+            email = form.cleaned_data['email']
+            print(email)
+            customer = Customer.objects.create(user=user,name=user,email=email)
             
-            customer = Customer.objects.create(user=user, name=name, email=email)
             print(customer,"lllllllllllllllllllllllllllllllllllllllll")  # Create a Customer object and associate it with the User
             customer.save()
 
