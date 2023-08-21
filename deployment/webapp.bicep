@@ -5,7 +5,7 @@ param name string = 'sareeapp-${uniqueString(resourceGroup().id)}'
 param location string = resourceGroup().location
 
 @description('Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries. Images from private registries require additional registry credentials.')
-param image string = 'ashishsng21/saree:v22'
+param image string = 'ashishsng21/saree:v24'
 
 @description('Port to open on the container and the public IP address.')
 param port int = 80
