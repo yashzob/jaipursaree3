@@ -45,13 +45,20 @@
 	      </li>
 	    </ul>
 	    <div class="form-inline my-2 my-lg-0">
-	     	<a href="{% url 'login'%}" class="btn btn-warning">Login</a>
-	     	
-	     	<a href="{% url 'cart' %}">
-	    		<img id="cart-icon" src="{% static 'images/cart.png' %}" style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
-	    	</a>
-	    	<p id="cart-total">{{total_quantity}}</p>
-	    </div>
+			{% if user.is_authenticated %}
+				<!-- User is logged in, display user's name -->
+				<p style="color: white; font-weight: bold;">Welcome, {{ user.username }}</p>
+			{% else %}
+				<!-- User is not logged in, display "Login" button -->
+				<a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+			{% endif %}
+			
+			<a href="{% url 'cart' %}">
+				<img id="cart-icon" src="{% static 'images/cart.png' %}" style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
+			</a>
+			<p id="cart-total">{{ total_quantity }}</p>
+		</div>
+		
 		<div style="text-align: center; margin-top: 10px;">
 			<a href="{% url 'logout' %}" style="background-color: #dc3545; color: #fff; padding: 8px 15px; border: none; cursor: pointer; text-decoration: none;">Logout</a>
 		  </div>
