@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 
 urlpatterns = [
@@ -12,5 +12,6 @@ urlpatterns = [
     path('login/', views.login1, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('register',views.register,name='register'),
+    path('number/', include('verification.urls')),
 ]
 

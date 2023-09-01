@@ -28,7 +28,7 @@ STRIPE_PUBLISHABLE_KEY = 'pk_test_51NQYgASB4mCrfni0e2EEWYddAhRwQ5AwD50Sa8FHpQrkk
 SECRET_KEY = 'django-insecure-3)-#)880@=d5efm$9z@_!y^b%7#ix-@f=b@i9nrj#ufp)hc-56'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store.apps.StoreConfig',
+    'verification'
 ]
 
 MIDDLEWARE = [
@@ -133,4 +134,11 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT= os.path.join(BASE_DIR,'static/images')
 
-MEDIA_URL = '/images/'
+MEDIA_URL = '/usr/src/app/static/images/'
+
+
+ACCOUNT_SID='ACce22acc627a519261fa51a50bd0e990b'
+AUTH_TOKEN='b112988fdc337fb2149f69127171dcf5'
+COUNTRY_CODE='+91'
+TWILIO_WHATSAPP_NUMBER='whatsapp:+14155238886'
+TWILIO_PHONE_NUMBER='+18507887048'

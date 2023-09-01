@@ -12,7 +12,19 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    #phone = forms.CharField()
 
+    class Meta:
+        model = User
+        fields = ['username', 'email',  'password1', 'password2']
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email address is already registered.")
+        return email
 
     #def clean_phone(self):
     #    phone = self.cleaned_data['phone']
@@ -174,101 +186,44 @@ def payment(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-
-from .models import Customer
 
 def login1(request):
     if request.method == 'POST':
         username_or_email = request.POST['username']
         password = request.POST['password']
 
-        # Check if the user already exists in the database (using email as username)
-        existing_user = User.objects.filter(email=username_or_email).first()
-
-        if existing_user:
-            # User already exists, try authenticating the user
-            user = authenticate(request, username=existing_user, password=password)
-        else:
-            # User does not exist, register a new user
-            form = CustomUserCreationForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-            else:
-                # Handle invalid form data
-                messages.error(request, 'Invalid registration data.')
-                return render(request, 'store/login.html', {'form': form})
+        # Authenticate the user
+        user = authenticate(request, username=username_or_email, password=password)
 
         if user is not None:
-            # Login the user and redirect to the store page
-            login(request, user)
-
-            # Create a related Customer record if it doesn't exist already
-            customer, created = Customer.objects.get_or_create(user=user, email=user.email)
-            if created:
-                # You can add additional fields to the Customer model here
-                customer.name = user.username
-                customer.save()
-
-            return redirect('store')  # Replace 'store' with the name of your store page or URL
+            # Login the user and redirect to a success page
+            login(request, user)  # Use the renamed login function
+            return redirect('store')  # Replace 'success_page' with the name of your success page or URL
         else:
             # Authentication failed, show an error message
             messages.error(request, 'Invalid username/email or password.')
 
-    form = CustomUserCreationForm()  # Create an empty form for GET requests
-    return render(request, 'store/login.html', {'form': form})
-
-
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField()
-    phone_number = forms.CharField()
-    #phone_number= "+91" + phone_number
-
-    class Meta:
-        model = User
-        fields = ['username', 'email',  'password1', 'password2']
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("This email address is already registered.")
-        return email
-
-from django.shortcuts import render, redirect
-
-from .models import Customer
+    return render(request, 'store/login.html')
 
 def register(request):
     form = CustomUserCreationForm()
     
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        print(form.is_valid())
         if form.is_valid():
-            user = form.save()  # Save the User object first
-
-            # Retrieve cleaned data from the form
-            email = form.cleaned_data['email']
-            phone_number = form.cleaned_data['phone_number']
+            user = form.save()
+            print(user)  # Save the User object first
+            #name = form.cleaned_data['name']  # Assuming 'name' is a field in the form
             
-            # Create a Customer instance and associate it with the User
-            customer = Customer.objects.create(user=user, email=email, phone_number=phone_number)
-            customer.name = user.username  # Set the name to the username by default
+            email = form.cleaned_data['email']
+            print(email)
+            customer = Customer.objects.create(user=user,name=user,email=email)
+            print(customer,"lllllllllllllllllllllllllllllllllllllllll")  # Create a Customer object and associate it with the User
             customer.save()
-
-            # You can also use the 'login' function to log in the user automatically
-            # after registration if you wish to do so
-            # login(request, user)
-
-            # Redirect the user to a success page or wherever you want
-            return redirect('store/login.html')  # Replace 'success' with your desired URL
-        else:
-            print("invalid details filled")
 
     context = {'form': form}
     return render(request, 'store/register.html', context)
-
-
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
